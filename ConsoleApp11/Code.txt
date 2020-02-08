@@ -1,6 +1,47 @@
-AAA=5*2
-BBB=4+6
-if(AAA==BBB)
-CCC=1
-else
-CCC=2
+println("Fibonacci")
+Array=[11]
+Array[0]=0
+Array[1]=1
+n=2
+while (n<=10)
+{
+	Array[n]=Array[n-2]+Array[n-1]
+	println(Array[n])
+	n=n+1
+}
+
+println("Prime")
+print(2)
+print(3)
+n=4
+while (n<=100)
+{
+   divisor=2
+   isPrime=1
+   while (divisor*divisor <= n)
+   {
+        tmp=n
+        while (tmp>=divisor)
+        {
+            tmp=tmp-divisor
+        }
+        if (tmp==0)
+        {
+            isPrime=0
+        }
+        else
+        {
+            none=0
+        }
+        divisor=divisor+1
+   }
+   if (isPrime==1)
+   {
+        print(n)
+   }
+   else
+   {
+        none=0
+   }
+   n=n+1
+}

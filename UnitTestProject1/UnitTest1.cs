@@ -53,6 +53,16 @@ namespace UnitTestProject1
         }
 
         [TestMethod]
+        public void CaculateMod()
+        {
+
+            calculatorParser parser = Setup("A=(5*(24/5))");
+            calculatorVisitor visitor = new calculatorVisitor();
+            visitor.Visit(parser.program());
+            Assert.AreEqual(0, visitor.variables["A"]);
+        }
+
+        [TestMethod]
         public void CheckBoolean1()
         {
             calculatorParser parser = Setup("A=1>2");
@@ -84,11 +94,10 @@ namespace UnitTestProject1
         {
             calculatorParser parser = Setup(
                                     @"B=1
+                                    A=3
                                     if (B==1){
                                        A=9
-                                     }
-                                    else{
-                                       A=6}");
+                                     }");
             calculatorVisitor visitor = new calculatorVisitor();
             visitor.Visit(parser.program());
             Assert.AreEqual(9, visitor.variables["A"]);
@@ -180,6 +189,16 @@ while (N<=10)
             Assert.AreEqual(1000, visitor.variables["B"]);
         }
 
+        [TestMethod]
+        public void CheckPrint()
+        {
+            calculatorParser parser = Setup(
+                                    @"print(1+2)");
+            calculatorVisitor visitor = new calculatorVisitor();
+            visitor.Visit(parser.program());
+            //Assert.AreEqual(999, visitor.arrays["A"][2]);
+            //Assert.AreEqual(1000, visitor.variables["B"]);
+        }
 
     }
 }

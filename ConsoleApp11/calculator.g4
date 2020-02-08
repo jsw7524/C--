@@ -3,18 +3,18 @@ grammar calculator;
  * Parser Rules
  */
 program:subprogram EOF;
-subprogram: statement | subprogram statement;
-statement            :  assignment | arraystatement | ifstatement | whilestatement;
+subprogram: statement | subprogram statement ;
+statement            :  assignment | arraystatement | ifstatement | whilestatement | print;
 
-ifstatement          : 'if' '(' expr0 ')' '{' subprogram '}' 'else' '{' subprogram '}' EOL;
+ifstatement          : 'if' '(' expr0 ')' '{' subprogram '}' 'else' '{' subprogram '}' ;
 
-whilestatement       :  'while' '(' expr0 ')' '{' subprogram '}' EOL;
+whilestatement       :  'while' '(' expr0 ')' '{' subprogram '}' ;
 
-assignment           :   IDENTIFIER OP_ASSIGN expr0 EOL #AssignVariable
-                       | IDENTIFIER'[' expr1 ']' OP_ASSIGN expr0 EOL #AssignArrayVariable
+assignment           :   IDENTIFIER OP_ASSIGN expr0  #AssignVariable
+                       | IDENTIFIER'[' expr1 ']' OP_ASSIGN expr0  #AssignArrayVariable
                        ; 
 
-arraystatement       : IDENTIFIER OP_ASSIGN '[' expr1 ']' EOL;
+arraystatement       : IDENTIFIER OP_ASSIGN '[' expr1 ']' ;
 
 expr0                :    expr1 #Exp1
                         | expr1 OP_EQU expr1 #OP_EQU
@@ -37,6 +37,12 @@ expr3                :   NUMBER #Number
                       | IDENTIFIER #GetValueIDENTIFIER
                       | IDENTIFIER '[' expr1 ']' #GetArrayValue
                       | '(' expr1 ')'  #Expr1Parentheses;
+
+print                :  'print' '('   '"' IDENTIFIER '"' ')'
+                     |  'print' '('  expr0 ')'
+                     |  'println' '('   '"' IDENTIFIER '"' ')'
+                     |  'println' '('  expr0 ')'
+                     ;
 /*
  * Lexer Rules
  */
