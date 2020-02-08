@@ -126,18 +126,18 @@ namespace ConsoleApp11
             return left <= right ? 1 : 0;
         }
 
-        //public override decimal VisitIfstatement([NotNull] calculatorParser.IfstatementContext context)
-        //{
-        //    if (1 == Convert.ToDecimal(Visit(context.expr0())))
-        //    {
-        //        Visit(context.subprogram(0));
-        //    }
-        //    else
-        //    {
-        //        Visit(context.subprogram(1));
-        //    }
-        //    return 0;
-        //}
+        public override decimal VisitIfstatement([NotNull] calculatorParser.IfstatementContext context)
+        {
+            if (1 == Convert.ToDecimal(Visit(context.expr0())))
+            {
+                Visit(context.statement(0));
+            }
+            else
+            {
+                Visit(context.statement(1));
+            }
+            return 0;
+        }
     }
 
 

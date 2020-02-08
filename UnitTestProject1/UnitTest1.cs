@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Antlr4.Runtime;
 using ConsoleApp11;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -8,46 +9,101 @@ namespace UnitTestProject1
     [TestClass]
     public class UnitTest1
     {
-        private SpeakParser Setup(string text)
+        private calculatorParser Setup(string text)
         {
             AntlrInputStream inputStream = new AntlrInputStream(text);
-            SpeakLexer speakLexer = new SpeakLexer(inputStream);
-            CommonTokenStream commonTokenStream = new CommonTokenStream(speakLexer);
-            SpeakParser speakParser = new SpeakParser(commonTokenStream);
-            return speakParser;
-        }
-        [TestMethod]
-        public void TestChat()
-        {
-            SpeakParser parser = Setup("john says \"hello\" \n michael says \"world\" \n");
-            SpeakParser.ChatContext context = parser.chat();
-            SpeakVisitor visitor = new SpeakVisitor();
-            visitor.Visit(context);
-            Assert.AreEqual(2, visitor.Lines.Count);
+            calculatorLexer calculatorLexer = new calculatorLexer(inputStream);
+            CommonTokenStream commonTokenStream = new CommonTokenStream(calculatorLexer);
+            calculatorParser calculatorParser = new calculatorParser(commonTokenStream);
+            return calculatorParser;
         }
 
         [TestMethod]
-        public void TestLine()
+        public void AssignNumber()
         {
-            SpeakParser parser = Setup("john says \"hello\" \n");
-            SpeakParser.LineContext context = parser.line();
-            SpeakVisitor visitor = new SpeakVisitor();
-            SpeakLine line = (SpeakLine)visitor.VisitLine(context);
+            calculatorParser parser = Setup("A=1");
+            calculatorVisitor visitor = new calculatorVisitor();
+            visitor.Visit(parser.program());
+            Assert.AreEqual(1, visitor.variables["A"]);
+        }
 
-            Assert.AreEqual("john", line.Person);
-            Assert.AreEqual("hello", line.Text);
+        [TestMethod]
+        public void AddTwoNumber()
+        {
+            calculatorParser parser = Setup("A=1+2");
+            calculatorVisitor visitor = new calculatorVisitor();
+            visitor.Visit(parser.program());
+            Assert.AreEqual(3, visitor.variables["A"]);
         }
         [TestMethod]
-        public void TestWrongLine()
+        public void CaculateMath1()
         {
-            SpeakParser parser = Setup("john sayan \"hello\" \n");
-            var context = parser.line();
+            calculatorParser parser = Setup("A=(1+2)*(24/8)-4");
+            calculatorVisitor visitor = new calculatorVisitor();
+            visitor.Visit(parser.program());
+            Assert.AreEqual(5, visitor.variables["A"]);
+        }
+        [TestMethod]
+        public void CaculateMath2()
+        {
+            calculatorParser parser = Setup("A=(1*10-10+2*10+40)/(9+1)");
+            calculatorVisitor visitor = new calculatorVisitor();
+            visitor.Visit(parser.program());
+            Assert.AreEqual(6, visitor.variables["A"]);
+        }
 
-            Assert.IsInstanceOfType(context, typeof(SpeakParser.LineContext));
-            Assert.AreEqual("john", context.name().GetText());
-            Assert.IsNull(context.SAYS());
-            Assert.AreEqual("johnsayan\"hello\"\n", context.GetText());
+        [TestMethod]
+        public void CheckBoolean1()
+        {
+            calculatorParser parser = Setup("A=1>2");
+            calculatorVisitor visitor = new calculatorVisitor();
+            visitor.Visit(parser.program());
+            Assert.AreEqual(0, visitor.variables["A"]);
+        }
 
+        [TestMethod]
+        public void CheckBoolean2()
+        {
+            calculatorParser parser = Setup("A=2>=2");
+            calculatorVisitor visitor = new calculatorVisitor();
+            visitor.Visit(parser.program());
+            Assert.AreEqual(1, visitor.variables["A"]);
+        }
+
+        [TestMethod]
+        public void CheckBoolean3()
+        {
+            calculatorParser parser = Setup("A=5*2==(6+4)");
+            calculatorVisitor visitor = new calculatorVisitor();
+            visitor.Visit(parser.program());
+            Assert.AreEqual(1, visitor.variables["A"]);
+        }
+
+        [TestMethod]
+        public void CheckIfStatement1()
+        {
+            calculatorParser parser = Setup(
+                                    @"B=1
+                                    if (B==1)
+                                       A=9
+                                    else
+                                       A=0");
+            calculatorVisitor visitor = new calculatorVisitor();
+            visitor.Visit(parser.program());
+            Assert.AreEqual(9, visitor.variables["A"]);
+        }
+        [TestMethod]
+        public void CheckIfStatement2()
+        {
+            calculatorParser parser = Setup(
+                                    @"B=1
+                                    if (B==2)
+                                       A=9
+                                    else
+                                       A=0");
+            calculatorVisitor visitor = new calculatorVisitor();
+            visitor.Visit(parser.program());
+            Assert.AreEqual(0, visitor.variables["A"]);
         }
     }
 }

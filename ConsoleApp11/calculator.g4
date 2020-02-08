@@ -50,5 +50,5 @@ OP_EQU       : '==';
 OP_LESS      : '<';
 OP_LESSEQU   : '<=';
 IDENTIFIER:[a-zA-Z][a-zA-Z0-9]*;
-EOL			 : 	'\r'? '\n' | '\r';
-WS : (' ' | '\t')+ -> channel(HIDDEN);
+WS : (' '|'\t') -> skip;
+EOL : ('\r'?'\n'|'\r') ;
