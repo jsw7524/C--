@@ -1,0 +1,6 @@
+AAA=5*3
+BBB=4+6
+if(AAA==BBB)
+CCC=1
+else
+CCC=2
