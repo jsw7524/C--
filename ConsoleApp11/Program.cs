@@ -14,6 +14,23 @@ namespace ConsoleApp11
     {
 
         public Dictionary<String, Decimal> variables = new Dictionary<String, Decimal>();
+        public Dictionary<String, List<Decimal>> arrays = new Dictionary<String, List<Decimal>>();
+
+        public override decimal VisitArraystatement([NotNull] calculatorParser.ArraystatementContext context)
+        {
+            var name = context.IDENTIFIER().ToString();
+            var size =Convert.ToInt32(Visit(context.expr1()));
+            var tmp = Enumerable.Range(0, size).Select(_ => new Decimal(0)).ToList();          
+            if (!variables.ContainsKey(name))
+            {
+                arrays.Add(name, tmp);
+            }
+            else
+            {
+                arrays[name] = tmp;
+            }
+            return base.VisitArraystatement(context);
+        }
 
         public override decimal VisitAdd([NotNull] calculatorParser.AddContext context)
         {
@@ -60,21 +77,21 @@ namespace ConsoleApp11
             return Visit(context.expr1());
         }
 
-        public override decimal VisitAssignment([NotNull] calculatorParser.AssignmentContext context)
-        {
-            var name = context.IDENTIFIER().ToString();
-            var value = Visit(context.expr0());
+        //public override decimal VisitAssignment([NotNull] calculatorParser.AssignmentContext context)
+        //{
+        //    var name = context.IDENTIFIER().ToString();
+        //    var value = Visit(context.expr0());
 
-            if (!variables.ContainsKey(name))
-            {
-                variables.Add(name, value);
-            }
-            else
-            {
-                variables[name] = value;
-            }
-            return value;
-        }
+        //    if (!variables.ContainsKey(name))
+        //    {
+        //        variables.Add(name, value);
+        //    }
+        //    else
+        //    {
+        //        variables[name] = value;
+        //    }
+        //    return value;
+        //}
 
         public override decimal VisitGetValueIDENTIFIER([NotNull] calculatorParser.GetValueIDENTIFIERContext context)
         {
@@ -130,13 +147,68 @@ namespace ConsoleApp11
         {
             if (1 == Convert.ToDecimal(Visit(context.expr0())))
             {
-                Visit(context.statement(0));
+                Visit(context.subprogram(0));
             }
             else
             {
-                Visit(context.statement(1));
+                Visit(context.subprogram(1));
             }
             return 0;
+        }
+
+        public override decimal VisitWhilestatement([NotNull] calculatorParser.WhilestatementContext context)
+        {
+            while (Convert.ToDecimal(Visit(context.expr0())) == 1)
+            {
+                Visit(context.subprogram());
+            }
+            return 0;
+        }
+
+        public override decimal VisitGetArrayValue([NotNull] calculatorParser.GetArrayValueContext context)
+        {
+            var name = context.IDENTIFIER().ToString();
+            var index = Convert.ToInt32(Visit(context.expr1()));
+            if (!arrays.ContainsKey(name))
+            {
+                throw new Exception();
+            }
+            else
+            {
+                return arrays[name][index];
+            }
+        }
+
+        public override decimal VisitAssignVariable([NotNull] calculatorParser.AssignVariableContext context)
+        {
+            var name = context.IDENTIFIER().ToString();
+            var value = Visit(context.expr0());
+
+            if (!variables.ContainsKey(name))
+            {
+                variables.Add(name, value);
+            }
+            else
+            {
+                variables[name] = value;
+            }
+            return value;
+        }
+
+        public override decimal VisitAssignArrayVariable([NotNull] calculatorParser.AssignArrayVariableContext context)
+        {
+            var name = context.IDENTIFIER().ToString();
+            var value = Visit(context.expr0());
+            var index = Convert.ToInt32(Visit(context.expr1()));
+            if (!arrays.ContainsKey(name))
+            {
+                throw new Exception();
+            }
+            else
+            {
+                arrays[name][index] = value;
+            }
+            return value;
         }
     }
 
@@ -147,17 +219,17 @@ namespace ConsoleApp11
         {
             try
             {
-                StringBuilder text = new StringBuilder("AAA=(11+1)/(2+2)\\r\\nBBB=3+6");
+                //StringBuilder text = new StringBuilder("AAA=(11+1)/(2+2)\\r\\nBBB=3+6");
 
-                AntlrInputStream inputStream = new AntlrInputStream(File.ReadAllText("Code.txt"));
-                calculatorLexer calculatorLexer = new calculatorLexer(inputStream);
-                CommonTokenStream commonTokenStream = new CommonTokenStream(calculatorLexer);
-                calculatorParser calculatorParser = new calculatorParser(commonTokenStream);
+                //AntlrInputStream inputStream = new AntlrInputStream(File.ReadAllText("Code.txt"));
+                //calculatorLexer calculatorLexer = new calculatorLexer(inputStream);
+                //CommonTokenStream commonTokenStream = new CommonTokenStream(calculatorLexer);
+                //calculatorParser calculatorParser = new calculatorParser(commonTokenStream);
 
-                var formulaContext = calculatorParser.program();
-                var visitor = new calculatorVisitor();
-                var val = visitor.Visit(formulaContext);
-                //Console.WriteLine(val);
+                //var formulaContext = calculatorParser.program();
+                //var visitor = new calculatorVisitor();
+                //var val = visitor.Visit(formulaContext);
+                ////Console.WriteLine(val);
 
 
             }

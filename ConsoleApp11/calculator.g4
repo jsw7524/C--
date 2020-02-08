@@ -2,18 +2,19 @@ grammar calculator;
 /*
  * Parser Rules
  */
-program:statement program | EOF;
+program:subprogram EOF;
+subprogram: statement | subprogram statement;
+statement            :  assignment | arraystatement | ifstatement | whilestatement;
 
-statement:                assignment
-                        | ifstatement
-                        | EOL
-                        ;
+ifstatement          : 'if' '(' expr0 ')' '{' subprogram '}' 'else' '{' subprogram '}' EOL;
 
-ifstatement          : 'if' '(' expr0 ')' EOL statement 'else' EOL statement ;
+whilestatement       :  'while' '(' expr0 ')' '{' subprogram '}' EOL;
 
-/*whilestatement       :  'while' '(' expr0 ')' EOL statement;
-*/
-assignment:IDENTIFIER OP_ASSIGN expr0 EOL;
+assignment           :   IDENTIFIER OP_ASSIGN expr0 EOL #AssignVariable
+                       | IDENTIFIER'[' expr1 ']' OP_ASSIGN expr0 EOL #AssignArrayVariable
+                       ; 
+
+arraystatement       : IDENTIFIER OP_ASSIGN '[' expr1 ']' EOL;
 
 expr0                :    expr1 #Exp1
                         | expr1 OP_EQU expr1 #OP_EQU
@@ -34,6 +35,7 @@ expr2                :      expr2 MUL expr3 #Mul
 
 expr3                :   NUMBER #Number
                       | IDENTIFIER #GetValueIDENTIFIER
+                      | IDENTIFIER '[' expr1 ']' #GetArrayValue
                       | '(' expr1 ')'  #Expr1Parentheses;
 /*
  * Lexer Rules
@@ -51,4 +53,4 @@ OP_LESS      : '<';
 OP_LESSEQU   : '<=';
 IDENTIFIER:[a-zA-Z][a-zA-Z0-9]*;
 WS : (' '|'\t') -> skip;
-EOL : ('\r'?'\n'|'\r') ;
+EOL : ('\r'?'\n'|'\r') -> skip ;

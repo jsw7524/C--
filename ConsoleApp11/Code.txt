@@ -1,4 +1,4 @@
-AAA=5*3
+AAA=5*2
 BBB=4+6
 if(AAA==BBB)
 CCC=1
