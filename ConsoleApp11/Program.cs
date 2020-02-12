@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 
 namespace ConsoleApp11
 {
+
+
     public class calculatorVisitor : calculatorBaseVisitor<Decimal>
     {
 
@@ -19,8 +21,8 @@ namespace ConsoleApp11
         public override decimal VisitArraystatement([NotNull] calculatorParser.ArraystatementContext context)
         {
             var name = context.IDENTIFIER().ToString();
-            var size =Convert.ToInt32(Visit(context.expr1()));
-            var tmp = Enumerable.Range(0, size).Select(_ => new Decimal(0)).ToList();          
+            var size = Convert.ToInt32(Visit(context.expr1()));
+            var tmp = Enumerable.Range(0, size).Select(_ => new Decimal(0)).ToList();
             if (!variables.ContainsKey(name))
             {
                 arrays.Add(name, tmp);
@@ -77,21 +79,6 @@ namespace ConsoleApp11
             return Visit(context.expr1());
         }
 
-        //public override decimal VisitAssignment([NotNull] calculatorParser.AssignmentContext context)
-        //{
-        //    var name = context.IDENTIFIER().ToString();
-        //    var value = Visit(context.expr0());
-
-        //    if (!variables.ContainsKey(name))
-        //    {
-        //        variables.Add(name, value);
-        //    }
-        //    else
-        //    {
-        //        variables[name] = value;
-        //    }
-        //    return value;
-        //}
 
         public override decimal VisitGetValueIDENTIFIER([NotNull] calculatorParser.GetValueIDENTIFIERContext context)
         {
@@ -151,7 +138,8 @@ namespace ConsoleApp11
             }
             else
             {
-                Visit(context.subprogram(1));
+                if (null != context.subprogram(1))
+                    Visit(context.subprogram(1));
             }
             return 0;
         }
@@ -219,12 +207,12 @@ namespace ConsoleApp11
                 Console.Write(context.IDENTIFIER().ToString() + " ");
             }
 
-            if (null !=  context.expr0())
+            if (null != context.expr0())
             {
                 Console.Write(Visit(context.expr0()) + " ");
 
             }
-            if ("println"==context.children.First().ToString())
+            if ("println" == context.children.First().ToString())
                 Console.WriteLine("");
             return base.VisitPrint(context);
         }
@@ -238,8 +226,6 @@ namespace ConsoleApp11
         {
             try
             {
-                //StringBuilder text = new StringBuilder("AAA=(11+1)/(2+2)\\r\\nBBB=3+6");
-
                 AntlrInputStream inputStream = new AntlrInputStream(File.ReadAllText("Code.txt"));
                 calculatorLexer calculatorLexer = new calculatorLexer(inputStream);
                 CommonTokenStream commonTokenStream = new CommonTokenStream(calculatorLexer);

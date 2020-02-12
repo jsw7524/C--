@@ -59,7 +59,103 @@ namespace UnitTestProject1
             calculatorParser parser = Setup("A=(5*(24/5))");
             calculatorVisitor visitor = new calculatorVisitor();
             visitor.Visit(parser.program());
-            Assert.AreEqual(0, visitor.variables["A"]);
+            Assert.AreEqual(24, visitor.variables["A"]);
+        }
+
+        [TestMethod]
+        public void CaculatePrime1()
+        {
+
+            calculatorParser parser = Setup(@"
+n=4
+A=[101]
+A[2]=1
+A[3]=1
+while (n<=100)
+{
+   divisor=2
+   isPrime=1
+   while (divisor*divisor <= n)
+   {
+        tmp=n
+        while (tmp>=divisor)
+        {
+            tmp=tmp-divisor
+        }
+        if (tmp==0)
+        {
+            isPrime=0
+        }
+        else
+        {
+            none=0
+        }
+        divisor=divisor+1
+   }
+   if (isPrime==1)
+   {
+        A[n]=1
+   }
+   else
+   {
+        none=0
+   }
+   n=n+1
+}
+                ");
+            calculatorVisitor visitor = new calculatorVisitor();
+            visitor.Visit(parser.program());
+            Assert.AreEqual(1, visitor.arrays["A"][2]);
+            Assert.AreEqual(1, visitor.arrays["A"][13]);
+            Assert.AreEqual(1, visitor.arrays["A"][53]);
+            Assert.AreEqual(1, visitor.arrays["A"][97]);
+            Assert.AreEqual(0, visitor.arrays["A"][20]);
+            Assert.AreEqual(0, visitor.arrays["A"][77]);
+            Assert.AreEqual(0, visitor.arrays["A"][36]);
+        }
+
+        [TestMethod]
+        public void CaculatePrime2()
+        {
+
+            calculatorParser parser = Setup(@"
+n=4
+A=[101]
+A[2]=1
+A[3]=1
+while (n<=100)
+{
+   divisor=2
+   isPrime=1
+   while (divisor*divisor <= n)
+   {
+        tmp=n
+        while (tmp>=divisor)
+        {
+            tmp=tmp-divisor
+        }
+        if (tmp==0)
+        {
+            isPrime=0
+        }
+        divisor=divisor+1
+   }
+   if (isPrime==1)
+   {
+        A[n]=1
+   }
+   n=n+1
+}
+                ");
+            calculatorVisitor visitor = new calculatorVisitor();
+            visitor.Visit(parser.program());
+            Assert.AreEqual(1, visitor.arrays["A"][2]);
+            Assert.AreEqual(1, visitor.arrays["A"][13]);
+            Assert.AreEqual(1, visitor.arrays["A"][53]);
+            Assert.AreEqual(1, visitor.arrays["A"][97]);
+            Assert.AreEqual(0, visitor.arrays["A"][20]);
+            Assert.AreEqual(0, visitor.arrays["A"][77]);
+            Assert.AreEqual(0, visitor.arrays["A"][36]);
         }
 
         [TestMethod]
@@ -175,6 +271,30 @@ while (N<=10)
             visitor.Visit(parser.program());
             Assert.AreEqual(55, visitor.variables["B"]);
         }
+
+        [TestMethod]
+        public void CaculateFibonacciArray()
+        {
+            calculatorParser parser = Setup(
+
+ @"
+Array=[11]
+Array[0]=0
+Array[1]=1
+n=2
+while (n<=10)
+{
+	Array[n]=Array[n-2]+Array[n-1]
+	n=n+1
+}
+");
+            calculatorVisitor visitor = new calculatorVisitor();
+            visitor.Visit(parser.program());
+            Assert.AreEqual(1, visitor.arrays["Array"][2]);
+            Assert.AreEqual(13, visitor.arrays["Array"][7]);
+            Assert.AreEqual(55, visitor.arrays["Array"][10]);
+        }
+
 
         [TestMethod]
         public void CheckArray1()

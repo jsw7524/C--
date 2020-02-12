@@ -2,11 +2,11 @@ grammar calculator;
 /*
  * Parser Rules
  */
-program:subprogram EOF;
-subprogram: statement | subprogram statement ;
+program              :subprogram EOF;
+subprogram           : statement | subprogram statement ;
 statement            :  assignment | arraystatement | ifstatement | whilestatement | print;
 
-ifstatement          : 'if' '(' expr0 ')' '{' subprogram '}' 'else' '{' subprogram '}' ;
+ifstatement          : 'if' '(' expr0 ')' '{' subprogram '}' 'else' '{' subprogram '}' | 'if' '(' expr0 ')' '{' subprogram '}'  ;
 
 whilestatement       :  'while' '(' expr0 ')' '{' subprogram '}' ;
 
